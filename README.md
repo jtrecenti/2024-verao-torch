@@ -5,12 +5,12 @@ Este curso é projetado para apresentar as capacidades do Torch, uma biblioteca 
 
 ## Conteúdo
 
-<!-- tabela markdown com 3 colunas: link do slide (pasta slides), link da pratica (pasta praticas)e link do quiz (colocar um link de formulário google genérico) -->
+<!-- tabela markdown com 6 colunas: aula, conteúdo, link do slide (pasta slides), link da pratica (pasta praticas), link do quiz (colocar um link de formulário google genérico) e exercício -->
 
-| Aula | Conteúdo | Slides | Prática | Quiz |
-|:----:|:--------:|:------:|:-------:|:----:|
-| 1 | Introdução ao Torch | [link](slides/01-introducao.html) | [link](praticas/01-torch.R) | [em breve]( ) |
-| 2 | Torch avançado e Redes Neurais | [em breve]( ) | [em breve]( ) | [em breve]( ) |
-| 3 | `luz` e Redes Neurais Convolucionais | [em breve]( ) | [em breve]( ) | [em breve]( ) |
-| 4 | Redes Neurais Recorrentes | [em breve]( ) | [em breve]( ) | [em breve]( ) |
-| 5 | Aplicações | [em breve]( ) | [em breve]( ) | [em breve]( ) |
+| Aula | Conteúdo | Slides | Prática | Quiz | Exercício |
+|:----:|:--------:|:------:|:-------:|:----:|:---------:|
+| 1 | Introdução ao Torch | [link](slides/01-introducao.html) | [link](praticas/01-torch.R) | [em breve]( ) | [em breve]( ) |
+| 2 | Torch avançado e Redes Neurais | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
+| 3 | `luz` e Redes Neurais Convolucionais | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
+| 4 | Redes Neurais Recorrentes | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
+| 5 | Aplicações e perspectivas | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
