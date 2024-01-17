@@ -151,6 +151,18 @@ Fonte: [PyTorch 101, Part 1: Understanding Graphs, Automatic Differentiation and
 
 ::::
 
+## Sobre o torch {background-image="img/torch_sci.png" background-opacity="0.1"}
+
+O `torch` é uma ferramenta de **computação científica**.
+
+. . .
+
+É bastante usado para **deep learning**, mas também pode ser usado para implementar outras classes de modelos.
+
+. . .
+
+**Vamos explorar o `torch` nessas duas vertentes.**
+
 ## Torch para R
 
 :::: {.columns}
@@ -171,18 +183,6 @@ Fonte: [PyTorch 101, Part 1: Understanding Graphs, Automatic Differentiation and
 :::
 
 ::::
-
-## Sobre o torch {background-image="img/torch_sci.png" background-opacity="0.1"}
-
-O `torch` é uma ferramenta de **computação científica**.
-
-. . .
-
-É bastante usado para **deep learning**, mas também pode ser usado para implementar outras classes de modelos.
-
-. . .
-
-**Vamos explorar o `torch` nessas duas vertentes.**
 
 # O curso
 
