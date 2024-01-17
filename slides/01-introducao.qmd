@@ -1,0 +1,350 @@
+---
+title: "Aplicações de Torch<br/>com o R"
+subtitle: "Verão IME-USP"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    highlight-style: arrow
+    footer: "2024"
+    preview-links: auto
+    slide-number: true
+    preload-iframes: true
+    embed-resources: true
+date-format: long
+lang: pt
+---
+
+## Julio Trecenti
+
+# Contexto
+
+## Hype da Inteligência Artificial
+
+![](img/trends.png)
+
+::: aside
+
+Fonte: [Google Trends](https://trends.google.com.br/trends/explore?date=today%205-y&geo=BR&q=%2Fm%2F0mkz,chatgpt&hl=pt)
+
+:::
+
+## Hype da Inteligência Artificial
+
+![](img/lula-bolsonaro.png)
+
+::: aside
+
+Fonte: [Google Trends](https://trends.google.com.br/trends/explore?geo=BR&q=%2Fm%2F0mkz,chatgpt,%2Fm%2F0pc9q,%2Fm%2F04g5q20&hl=pt)
+
+:::
+
+## Pesquisa em IA+ML
+
+::: {.center}
+
+![](img/papers.jpeg){height=500}
+
+:::
+
+::: aside
+
+Fonte: [Predicting the Future of AI with AI](https://arxiv.org/abs/2210.00881).
+
+:::
+
+## IA "está" Machine Learning
+
+::: {.center}
+
+![](img/ml-stats.jpeg){height=500}
+
+:::
+
+. . .
+
+No futuro, talvez não seja assim!
+
+## O que é Machine Learning?
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {.fragment fragment-index=1}
+
+![](img/ia_esquerda.png){height=400}
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment fragment-index=2}
+
+![](img/ia_direita.png){height=400}
+
+:::
+
+:::
+
+::::
+
+## Deep Learning é Machine Learning
+
+![](img/artificial-intelligence.png)
+
+# Ferramentas
+
+## TensorFlow e PyTorch
+
+::: {.center}
+
+![](img/Timeline-of-deep-learning-frameworks.png){fig-scap="Timeline of deep learning frameworks" height="500" fig-align="center"}
+
+:::
+
+::: {.aside}
+Elshawi, R., Wahab, A., Barnawi, A. et al. DLBench: a comprehensive experimental evaluation of deep learning frameworks. Cluster Comput 24, 2017–2038 (2021). <https://doi.org/10.1007/s10586-021-03240-4>
+:::
+
+## Diferenciais {.incremental}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {.fragment fragment-index=1}
+
+### GPU
+
+![](img/GPU-vs-CPU-cores.webp){width=100%}
+
+::: aside
+
+Fonte: [GPU vs CPU: Differences and Definition
+](https://www.liquidweb.com/blog/gpu-vs-cpu/)
+
+:::
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {.fragment fragment-index=2}
+
+### Autograd
+
+![](img/autograd.png){width=100%}
+
+::: aside
+
+Fonte: [PyTorch 101, Part 1: Understanding Graphs, Automatic Differentiation and Autograd](https://blog.paperspace.com/pytorch-101-understanding-graphs-and-automatic-differentiation/)
+
+:::
+
+:::
+
+:::
+
+::::
+
+## Torch para R
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- É uma interface do PyTorch para R
+- Escrito completamente em R e C++ (e um pouco de C)
+- Não depende de instalação do Python
+- É um framework: possui extensões como o pacote `luz`, `torchaudio` e `torchvision`.
+
+:::
+
+::: {.column width="50%"}
+
+![](img/torch-logo.png){width=100%}
+
+:::
+
+::::
+
+## Sobre o torch {background-image="img/torch_sci.png" background-opacity="0.1"}
+
+O `torch` é uma ferramenta de **computação científica**.
+
+. . .
+
+É bastante usado para **deep learning**, mas também pode ser usado para implementar outras classes de modelos.
+
+. . .
+
+**Vamos explorar o `torch` nessas duas vertentes.**
+
+# O curso
+
+## Objetivos de aprendizagem
+
+::: {.incremental}
+
+- Apresentar a notação básica do `torch`
+- Mostrar como usar o `torch` para ajustar modelos de regressão
+- Utilizar o pacote `luz` para ajustar modelos de redes neurais
+- Aplicações do `torch` em problemas envolvendo imagens
+- Aplicações do `torch` em problemas envolvendo textos e séries de tempo
+- Discutir sobre extensões do `torch` e perspectivas futuras
+
+:::
+
+## Desejo
+
+O `torch` foi desenvolvido por um ex-aluno do IME-USP: [Daniel Falbel](https://github.com/dfalbel).
+
+Nosso desejo é que o `torch` seja utilizado pelo IME-USP e outros institutos como uma ferramenta de ensino e pesquisa.
+
+![](img/torch_ime.png){width=60%, fig-align="center"}
+
+## ⚠️ Alerta ⚠️
+
+Este curso é **intermediário / avançado**.
+
+. . .
+
+A ideia é que você já tenha alguma experiência com o `R` e com modelagem estatística.
+
+. . .
+
+A ideia do curso é começar com aspectos básicos (básicos != fáceis) e ir avançando para aplicações com menor detalhamento.
+
+## Agenda do curso
+
+::: {.panel-tabset}
+
+
+### Aula 1
+
+**Tema**: Introdução ao `torch`
+
+- Panorama da inteligência artificial
+- histórico das ferramentas tensorflow e pytorch
+- Torch no R
+- Sintaxe do torch
+- **Aplicação 1**: multiplicação de matrizes (regressão linear)
+
+### Aula 2
+
+**Tema**: `torch` avançado e otimização
+
+- Descida de gradiente
+- Autograd
+- **Aplicação 2**: regressão linear com SGD
+- Módulos
+- **Aplicação 3**: MLP
+- Otimizadores
+- **Aplicação 4**: regressão logística e MLP logístico
+
+### Aula 3
+
+**Tema**: Pacote `luz` e imagens
+
+- Pacote Luz
+- **Aplicação 5**: todos os modelos anteriores com o Luz
+- Datasets e dataloaders
+- Convolução
+- **Aplicação 6**: CNN com mnist
+
+### Aula 4
+
+**Tema**: Sequências, textos, séries de tempo
+
+- Embeddings
+- **Aplicação 7**: modelo de texto simples
+- LSTM
+- **Aplicação 8**: séries temporais com LSTM
+
+### Aula 5
+
+**Tema**: Outras aplicações e perspectivas
+
+- Transformers
+- Hugging face
+- Autoencoder
+- GAN
+- Tabular data
+- Captcha
+- ... outros assuntos ...
+
+:::
+
+## Materiais
+
+::: {.center}
+
+Você pode acessar a página de materiais neste link:
+
+<https://jtrecenti.github.io/2024-torch/>
+
+:::
+
+## Limitações
+
+**Não vamos falar de configuração de GPU**.
+
+Se você quiser usar GPU, você vai precisar configurar a sua máquina.
+
+. . .
+
+**Não vamos falar do GPT-4 Llama 2**
+
+O instrutor não é especialista no assunto, e não é nosso objetivo falar dos Large Language Models.
+
+Vamos falar um pouco sobre como é a **arquitetura** desses modelos, mas não vamos discutir como eles são treinados.
+
+## Dinâmica
+
+Teremos aulas expositivas, sendo a menor parte nos slides e a maior parte no próprio R.
+
+### Posit Cloud
+
+Já deixamos um ambiente preparado para você trabalhar.
+
+Acesse: <https://posit.cloud> e faça sua conta.
+
+## Exercícios
+
+Ao final das aulas 1-4, vamos liberar uma lista de exercícios.
+
+Os exercícios **não são obrigatórios**
+
+O objetivo dos exercícios é **gerar dúvidas**.
+
+## Avaliação - Quiz
+
+Ao final das aulas 1-4, **teremos um quiz**. Ele terá perguntas sobre o conteúdo da aula.
+
+Alguns exercícios envolvem rodar códigos. Outros serão perguntas conceituais.
+
+. . .
+
+**O quiz será a sua avaliação!** Não deixe de fazer! O prazo para entrega dos 4 quizes será o **último dia de aula, 07/02**.
+
+A última aula terá, no lugar de um quiz, um formulário de *feedback*. Quem responder ao quiz terá **um ponto extra** na nota final. O prazo para responder ao último quiz também é dia 07/02.
+
+## Referências
+
+- [Site do Torch](https://torch.mlverse.org/)
+
+- [Deep Learning and Scientific Computing with R torch](https://skeydan.github.io/Deep-Learning-and-Scientific-Computing-with-R-torch/)
+
+- [Deep Learning Book](https://www.deeplearningbook.org/) (obs: não é o livro em português!)
+
+- [Introduction to Statistical Learning](https://www.statlearning.com/)
+
+- [Aprendizado de máquina sob a ótica estatística](https://tiagoms.com/publications/ame/)
+
+
+
+
