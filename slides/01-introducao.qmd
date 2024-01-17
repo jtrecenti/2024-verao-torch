@@ -285,7 +285,7 @@ A ideia do curso é começar com aspectos básicos (básicos != fáceis) e ir av
 
 Você pode acessar a página de materiais neste link:
 
-<https://jtrecenti.github.io/2024-torch/>
+<https://jtrecenti.github.io/2024-verao-torch/>
 
 :::
 
