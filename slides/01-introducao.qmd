@@ -191,10 +191,8 @@ O `torch` é uma ferramenta de **computação científica**.
 ::: {.incremental}
 
 - Apresentar a notação básica do `torch`
-- Mostrar como usar o `torch` para ajustar modelos de regressão
+- Mostrar como usar o `torch` para ajustar modelos de regressão e outras operações matemáticas
 - Utilizar o pacote `luz` para ajustar modelos de redes neurais
-- Aplicações do `torch` em problemas envolvendo imagens
-- Aplicações do `torch` em problemas envolvendo textos e séries de tempo
 - Discutir sobre extensões do `torch` e perspectivas futuras
 
 :::
