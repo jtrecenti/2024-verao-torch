@@ -331,6 +331,39 @@ Alguns exercícios envolvem rodar códigos. Outros serão perguntas conceituais.
 
 A última aula terá, no lugar de um quiz, um formulário de *feedback*. Quem responder ao quiz terá **um ponto extra** na nota final. O prazo para responder ao último quiz também é dia 07/02.
 
+## Certificado
+
+O certificado para o curso terá os seguintes critérios:
+
+- 75% de presença (ou seja, só pode faltar uma aula!)
+- 50% de acerto nos quizes
+
+## Discussões
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+### EasyRetro
+
+![](img/qrcode_easyretro.png){width=100%}
+
+[link aqui](https://easyretro.io/publicboard/hamgIr9MwiaLrxT3vOS87R2PqB12/63c3bd99-9fca-4cf6-ba51-bf87747a5ae5){target="_blank"}
+
+:::
+
+::: {.column width="50%"}
+
+### Forum do Moodle
+
+![](img/forum.png)
+
+[link aqui](https://cursosextensao.usp.br/mod/forum/view.php?id=217739){target="_blank"}
+
+:::
+
+::::
+
 ## Referências
 
 - [Site do Torch](https://torch.mlverse.org/)

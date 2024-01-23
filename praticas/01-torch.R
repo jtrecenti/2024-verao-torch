@@ -34,6 +34,8 @@ t2$dtype
 # Alterando a forma do tensor
 (t3 <- t1$view(c(1, 1)))
 
+t3$shape
+
 # Criando tensores -----------------------------------------------------------
 # Há várias maneiras de criar tensores, incluindo a partir de valores,
 # especificações ou datasets
@@ -44,6 +46,8 @@ t2$dtype
 # Tensores a partir de especificações
 # Por exemplo, criando um tensor 3x3 com valores normalmente distribuídos
 (t5 <- torch_randn(3, 3))
+
+(t5 <- torch_rand(3, 3))
 
 # Tensores a partir de datasets
 
@@ -81,6 +85,7 @@ t6
 
 # Slicing: Selecionando um subconjunto do tensor
 # Exemplo: selecionando a primeira "página" do tensor 3D
+
 (primeira_pagina <- t[1, ..])
 
 # Indexação: Acessando um elemento específico
@@ -91,6 +96,7 @@ t6
 # Combinações de slicing e indexação
 # Exemplo: selecionando a primeira e a terceira coluna da segunda página
 (colunas_1_3_pag_2 <- t[2, .., c(1, 3)])
+# (colunas_1_3_pag_2 <- t[2, , c(1, 3)])
 
 # No torch, o -1 funciona para pegar o último elemento
 # Exemplo: selecionando a última coluna da última página
