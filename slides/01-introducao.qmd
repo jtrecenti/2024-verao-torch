@@ -14,7 +14,33 @@ date-format: long
 lang: pt
 ---
 
-## Julio Trecenti
+##
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+### Julio Trecenti
+
+Doutor em Estatística pelo IME-USP. Professor no Insper. Diretor-Técnico da Associação Brasileira de Jurimetria (ABJ). Trabalha com web scraping, arrumação de dados, inteligência artificial, processamento de linguagem natural, visualização de dados e dashboards.
+
+<https://jtrecenti.com/cv>
+
+:::
+
+::: {.column width="50%"}
+
+### Alan da Silva
+
+Doutorando em estatística no IME-USP, tive meu primeiro contato com o R no início da
+graduação. Tive oportunidade de contribuir com o pacote [{geobr}](https://github.com/ipeaGIT/geobr). Costumo pesquisar por novos pacotes nas horas vagas, principalmente os focados em
+modelagem de dados.
+
+[LinkedIn](https://www.linkedin.com/in/alan-silva-341600196/)
+
+:::
+
+::::
 
 # Contexto
 
@@ -295,11 +321,11 @@ Se você quiser usar GPU, você vai precisar configurar a sua máquina.
 
 . . .
 
-**Não vamos falar do GPT-4 Llama 2**
+**Não vamos falar do GPT-4, Llama 2, etc**
 
-O instrutor não é especialista no assunto, e não é nosso objetivo falar dos Large Language Models.
+O instrutor não é especialista no assunto, e não é nosso objetivo falar dos Large Language Models (LLMs) de forma aprofundada.
 
-Vamos falar um pouco sobre como é a **arquitetura** desses modelos, mas não vamos discutir como eles são treinados.
+Vamos falar um pouco sobre como é a **arquitetura** desses modelos, mas não vamos discutir como eles são treinados em detalhes.
 
 ## Dinâmica
 
@@ -307,9 +333,13 @@ Teremos aulas expositivas, sendo a menor parte nos slides e a maior parte no pr�
 
 ### Posit Cloud
 
-Já deixamos um ambiente preparado para você trabalhar.
+Se quiser, deixamos um ambiente preparado para você trabalhar.
 
 Acesse: <https://posit.cloud> e faça sua conta.
+
+![](img/qrcode_positcloud.png){width=30%}
+
+[Link de convite](https://posit.cloud/spaces/464933/join?access_code=qmngDNDfzC2IJCUr1TFaE9eukVR7QKvk5M6lP9vy)
 
 ## Exercícios
 
