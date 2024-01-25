@@ -10,6 +10,8 @@ library(torch)
 t1 <- torch_tensor(1)
 print(t1)
 
+class(t1)
+
 # Propriedades de um tensor
 # Podemos verificar o tipo de dados, o dispositivo e a forma do tensor
 t1$dtype
@@ -31,6 +33,8 @@ t2$dtype
 # t2 <- t1$to(device = "cuda") # Descomente se tiver GPU
 # print(t2$device)
 
+t2 <- t1$to(device = "cuda")
+
 # Alterando a forma do tensor
 (t3 <- t1$view(c(1, 1)))
 
@@ -45,6 +49,9 @@ t3$shape
 
 # Tensores a partir de especificações
 # Por exemplo, criando um tensor 3x3 com valores normalmente distribuídos
+
+## cuidado! seed
+## torch::local_torch_manual_seed(1)
 (t5 <- torch_randn(3, 3))
 
 (t5 <- torch_rand(3, 3))
@@ -54,11 +61,22 @@ t3$shape
 # Supondo que temos um dataset em um dataframe chamado 'meu_dataframe'
 
 cars
+
+class(cars)
+
+torch_tensor(cars)
+
 (meu_tensor <- torch_tensor(as.matrix(cars)))
 
 # Note que é necessário transformar o dataframe em uma matriz para que o
 # torch_tensor funcione. Isso pode dar mais trabalho em casos envolvendo
 # datasets mais complexos, como dados de textos.
+
+iris |>
+  dplyr::count(Species)
+
+model.matrix(~., data = iris) |>
+  torch_tensor()
 
 # Operações em tensores ------------------------------------------------------
 # Podemos realizar operações matemáticas comuns com tensores
@@ -69,10 +87,15 @@ t7 <- torch_tensor(c(3, 4))
 # Adição
 (resultado <- torch_add(t6, t7))
 
+# ggplot2:::`+.gg`
+
 t6 + t7 # Equivalente a torch_add(t6, t7)
 
 # Adição in-place (modifica o tensor original). Cuidado!!!
 t6$add_(t7)
+t6
+
+t6$add(t7)
 t6
 
 # Operações de matriz, como produto escalar
@@ -85,6 +108,9 @@ t6
 
 # Slicing: Selecionando um subconjunto do tensor
 # Exemplo: selecionando a primeira "página" do tensor 3D
+
+torch_tensor(array(1:81, dim = c(3, 3, 3, 3)))[1,..]
+t[1,,]
 
 (primeira_pagina <- t[1, ..])
 
@@ -103,6 +129,8 @@ t6
 t[3, ..]
 (ultima_coluna_ultima_pagina <- t[3, .., -1])
 
+c(1, 2, 3)[-1]
+torch_tensor(c(1, 2, 3, 3,4,5,57,7))[2:-1]
 
 # Redimensionando tensores ---------------------------------------------------
 
@@ -190,6 +218,22 @@ tensor_nao_contiguo$reshape(c(9))
 # Criando dois tensores de formas diferentes
 (t_a <- torch_rand(c(3, 1)))
 (t_b <- torch_rand(c(1, 4)))
+
+c(3, 4)
+c(3, 4)
+
+(t_a <- torch_arange(1,3)$view(c(3, 1)))
+
+(t_b <- torch_arange(1,4)$view(c(1, 4)))
+
+t_a + t_b
+
+a <- torch_tensor(matrix(c(c(1,2,3), c(1,2,3), c(1,2,3), c(1,2,3)), ncol = 4))
+
+b <- torch_tensor(matrix(c(c(1,2,3,4), c(1,2,3,4), c(1,2,3,4)), ncol = 4, byrow = TRUE))
+
+a+b
+
 
 # Broadcasting com escalar
 # Multiplicando um tensor por um escalar
