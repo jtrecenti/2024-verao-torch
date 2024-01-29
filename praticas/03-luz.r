@@ -83,7 +83,7 @@ ggplot(cars_scale) +
 ## exemplo:
 # install.packages("torchdatasets")
 
-ds <- torchvision::mnist_dataset("dados/mnist", download = TRUE)
+ds <- torchvision::mnist_dataset("dados/", download = TRUE)
 ds$.getitem(1)
 
 # Primeiro, vamos criar um dataset() a partir dos dados que já temos.
@@ -128,7 +128,7 @@ ds_cars_alternativa[1]
 # criar. O dataloader() recebe o dataset() e o tamanho do lote (batch_size).
 # O tamanho do lote é o número de itens que serão retornados a cada iteração.
 
-dl_cars <- dataloader(da_cars, batch_size = 10, shuffle = TRUE)
+dl_cars <- dataloader(ds_cars, batch_size = 10, shuffle = TRUE)
 
 length(ds_cars)
 length(dl_cars)
@@ -201,7 +201,7 @@ ggplot(cars_scale) +
 
 train_ds <- mnist_dataset(
   "dados/",
-  download = TRUE,
+  download = FALSE,
   train = TRUE,
   transform = transform_to_tensor
 )
