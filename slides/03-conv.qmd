@@ -1,0 +1,704 @@
+---
+title: "Aplicações de Torch<br/>com o R"
+subtitle: "Redes neurais convolucionais"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    highlight-style: arrow
+    footer: "2024"
+    preview-links: auto
+    slide-number: true
+    preload-iframes: true
+    embed-resources: true
+date-format: long
+lang: pt
+---
+
+```{r setup, include=FALSE}
+ggplot2::theme_set(ggplot2::theme_minimal(base_size = 18))
+library(ggplot2)
+library(tibble)
+```
+
+# Revisão
+
+## O que é deep learning?
+
+- Nós usamos uma composição de operações não lineares, chamadas camadas, para aprender uma representação do que estamos estudando.
+
+- O número de camadas é o que dá a "profundidade".
+
+- Hoje em dia temos modelos com centenas de camadas.
+
+- Nome alternativo (menos apelativo): __aprendizado de representação em camadas__.
+
+
+## Conhecimentos necessários
+
+- Para trabalhar com redes neurais, é necessário saber fazer __multiplicações de matrizes__ e __cálculo de derivadas (gradientes)__.
+
+- Conhecimentos em __probabilidade e estatística__ ajudam a entender de onde as funções vêm e como lidar com os hiperparâmetros.
+
+
+## Arquitetura de uma rede neural (completa)
+
+![](img/esquema_01.png){width=100%}
+
+Vamos ver cada parte separadamente.
+
+## Arquitetura de uma rede neural (layer)
+
+```{r}
+"img/esquema_01.png" |>
+  magick::image_read() |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 30),
+    boxcolor = "#ffffffee",
+    location = "+70+300",
+    size = 180
+  ) |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 30),
+    boxcolor = "#ffffffee",
+    location = "+10+640",
+    size = 400
+  ) |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 2),
+    boxcolor = "#ffffffee",
+    location = "+10+340",
+    size = 400
+  )
+# knitr::include_graphics("img/esquema_01.png")
+```
+
+
+## Definição do modelo
+
+Definimos o modelo de regressão linear da seguinte forma:
+
+$$\hat{y_i} = w  x_i + b$$
+
+Poderíamos escrever
+
+$$\hat{y_i} = f(x_i)$$
+
+em que:
+
+$$f(x) = w  x + b$$
+
+Chamamos $f$ de **'layer'** (camada) na terminologia de redes neurais.
+
+## Layers (Camadas)
+
+- Uma **'layer'** é uma transformação dos dados que é parametrizada por **pesos**.
+
+- 'Aprender', então, significa encontrar os melhores **pesos** para cada camada.
+
+No exemplo:
+
+$$f(x) = w x + b$$
+
+Os pesos são $w$ e $b$.
+
+- Essas camadas são os 'tijolos' do Deep Learning, que podem ter diversas 'camadas'.
+
+- A camada do exemplo é chamada de **'Densa'** ou **'Linear'**.
+
+- Um modelo pode possuir uma ou mais dessas camadas.
+
+## Arquitetura de uma rede neural (perda)
+
+```{r}
+"img/esquema_01.png" |>
+  magick::image_read() |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 30),
+    boxcolor = "#ffffffee",
+    location = "+70+000",
+    size = 500
+  ) |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 3),
+    boxcolor = "#ffffffee",
+    location = "+10+440",
+    size = 400
+  )
+```
+
+
+## Função de perda
+
+- Mede quanto o modelo está perto do que queremos que ele fique.
+
+- No nosso caso, mede o quanto a previsão dada por $wx + b$ está perto de $y$, o verdadeiro valor daquele imóvel.
+
+- Uma função de perda bastante usada é o **MSE**: Erro quadrático médio:
+
+$$L(\hat{y}) = \frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y_i})^2$$
+
+- Podemos reescrever como uma função dos pesos:
+
+
+$$L(w, b) = \frac{1}{n} \sum_{i=1}^{n} (y_i - wx_i - b)^2$$
+
+
+## Arquitetura de uma rede neural (otimização)
+
+```{r}
+"img/esquema_01.png" |>
+  magick::image_read() |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 30),
+    boxcolor = "#ffffffee",
+    location = "+70+000",
+    size = 443
+  ) |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 10),
+    boxcolor = "#ffffffee",
+    location = "+380+440",
+    size = 382
+  )
+```
+
+## Otimização
+
+### Até agora:
+
+- Vimos que nosso objetivo é minimizar a função de perda.
+- Para isso precisamos encontrar o valor dos pesos que faz a função de perda ter o valor mínimo possível.
+
+### Agora:
+
+- O processo de encontrar o mínimo de uma função é chamado de **otimização**.
+- Existem diversos algoritmos de otimização. Em geral eles são adequados ou não dependendo da função que você está otimizando.
+- Usamos algoritmos que são variações da __descida do gradiente__.
+
+## Descida de gradiente
+
+- Queremos encontrar o valor mínimo da curva.
+
+- A partir de um ponto, consigo traçar uma reta tangente a esse ponto. O que fazer?
+
+```{r}
+knitr::include_graphics("img/grad1.png")
+```
+
+## Descida de gradiente
+
+```{r}
+knitr::include_graphics("img/anima_grad1-1.gif")
+```
+
+## Encontrando o mínimo da função
+
+```{r}
+knitr::include_graphics("img/anima_grad2-1.gif")
+```
+
+## Arquitetura de uma regressão linear
+
+```{r}
+"img/esquema_01.png" |>
+  magick::image_read() |>
+  magick::image_annotate(
+    stringr::str_dup(" ", 30),
+    boxcolor = "#ffffffee",
+    location = "+70+130",
+    size = 180
+  )
+```
+
+## Grafo de computação
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+
+- É útil representar modelo em um grafo de computação.
+- **Cinza** são os pesos.
+- **Verde** são os dados.
+- **Laranja** são variáveis derivadas de dados & pesos.
+
+:::
+
+:::{.column width="50%"}
+
+
+```{r}
+knitr::include_graphics("img/grafo-computacao.png")
+```
+
+:::
+
+::::
+
+
+## Resultado
+
+- $b$ e $m$ representam $b$ e $w$ no nosso exemplo. O eixo 'Error' representa o valor da função de perda.
+
+- Conseguimos visualizar a descida até o mínimo da função de perda pelo método do gradiente.
+
+- Na **direita** a reta ajustada para os dados.
+
+```{r, out.width="80%"}
+knitr::include_graphics("img/gradient_descent_line_graph.gif")
+```
+
+
+::: aside
+**Fonte**: [Link](https://alykhantejani.github.io/images/gradient_descent_line_graph.gif)
+:::
+
+## SGD (Stochastic gradient descent)
+
+- Em vez de calcular a média da derivada em todos os exemplos da base de dados, calculamos em apenas uma __amostra__. Essa amostra é chamada de __mini-batch__.
+
+- Cada vez que atravessamos a base inteira dessa forma chamamos de **'epoch'**.
+
+- É possível atualizar os pesos sem precisar fazer contas na base inteira. Mais **rápido**.
+
+- Como estimamos o passo com apenas uma amostra, os passos podem ser ruins.
+
+- Na prática, parece que o fato dos passos serem ruins perto do mínimo é bom, pois isso faz um certo tipo de regularização. Não se sabe explicar esse comportamento muito bem ainda. [Fonte](https://www.stat.cmu.edu/~ryantibs/convexopt/lectures/stochastic-gd.pdf)
+
+## Variações
+
+- Existem outras variações do SGD, cada tentando resolver um problema diferente.
+
+- [Esse artigo](https://ruder.io/optimizing-gradient-descent/) é um ótimo resumo de todas as versões que existem.
+
+- Não existe um que é sempre melhor do que os outros.
+
+- Além do SGD, os mais usados são SGD com momentum, adam e rmsprop.
+
+
+## Ativação
+
+![](img/ativacao.png)
+
+
+## Rectified Linear Units (ReLu)
+
+
+- Usamos a função de ativação $\sigma(z) = max\{0, z\}$.
+
+- A ideia do ReLu é ser fácil de otimizar, porque é muito parecido com simplesmente não ter ativação (ativação linear).
+
+- As derivadas são altas quando a unidade é importante, isto é, quando o output é alto.
+
+- Ver capítulo [6.3.1 do Deep Learning Book](https://www.deeplearningbook.org/contents/mlp.html) para outras extensões.
+
+## Sigmoid
+
+:::: {.columns}
+
+:::{.column width="50%"}
+
+- A função sigmoid é dada por:
+
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+- Antes da introdução do ReLu, a maioria das redes neurais usava esse tipo de ativação.
+
+- A derivada da sigmoid fica saturada quando o input é muito negativo ou muito positivo.
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/sigmoid.png')
+```
+
+:::
+::::
+
+::: aside
+**Fonte**: https://towardsdatascience.com/derivative-of-the-sigmoid-function-536880cf918e
+:::
+
+
+## Sigmoid
+
+:::: {.columns}
+
+:::{.column width="50%"}
+
+- A função sigmoid é dada por:
+
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
+
+- Não se recomenda usá-la como função de ativação em hidden layers
+
+- Ver capítulo 6.2.3 do [Deep Learning Book](https://www.deeplearningbook.org/contents/mlp.html).
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/sigmoid.png')
+```
+
+:::
+::::
+
+::: aside
+**Fonte**: https://towardsdatascience.com/derivative-of-the-sigmoid-function-536880cf918e
+:::
+
+
+## Regressão logística
+
+Em problemas de classficação, não queremos que $\hat{y}$ seja qualquer valor, e sim a probabilidade de $y$ ser de uma determinada classe.
+
+Temos então 2 pontos:
+
+1. Queremos que $\hat{y}$ seja um número entre 0 e 1.
+
+2. Como queremos que o output $\hat{y}$ seja uma probabilidade, não queremos minimizar o MSE e sim uma outra função de perda. Como o sigmoid satura muito rápido, precisamos de uma função de perda que lide com isso.
+
+- Para resolver esse problema basta usar uma função de ativação na última camada que transforme o intervalo $]-\infty, \infty[$ no intervalo $[0,1]$.
+
+- Uma função famosa por isso, e que já conhecemos é a função sigmoid.
+
+## A função de perda
+
+Em geral usamos a função de perda que chamamos de **'cross entropy'**.
+
+Essa função é dada por:
+
+$$L(\hat{y}) = \sum_{i = 1}^{n} \left[ y_i \times \log \hat{y_i} + (1-y) \times \log(1 - \hat{y_i}) \right]$$
+Isso fica mais claro quando lemos o seguinte código:
+
+```{r, echo = TRUE}
+cross_entropy <- function(y_hat) {
+  if (y == 1) -log(y_hat)
+  else -log(-y_hat)
+}
+```
+
+Isso equivale a estimativa de máxima verossimilhança quando assumimos que $y$ tem distribuição $\text{Bernoulli}(\hat{y})$.
+
+
+## Mais de duas categorias
+
+- Quando temos um problema de predição de muitas categorias, a nossa resposta é uma matriz, por exemplo:
+
+```{r}
+knitr::kable(tibble::tribble(
+  ~banana, ~`maçã`, ~ laranja,
+   0     ,   1    ,  0,
+   1     ,   0    ,  0,
+   0     ,   0    ,  1
+))
+```
+
+- O número de colunas igual ao número de categorias possíveis.
+
+- O número de linhas é o número de observações da base.
+
+- Os valores são 0 quando a observação **não** é daquela categoria e 1 quando é da categoria.
+
+## Mais de duas categorias
+
+Queremos que o nosso modelo retorne uma matriz de probabilidades, por exemplo:
+
+```{r}
+knitr::kable(tibble::tribble(
+  ~banana, ~`maçã`, ~ laranja,
+   0.2     ,   0.7    ,  0.1,
+   0.6     ,   0.1    ,  0.3,
+   0.1     ,   0.3    ,  0.6
+))
+```
+
+- Veja que as linhas somam 1.
+- Para isso usamos a função de ativação 'softmax'.
+
+Seja $x = (x_1, x_2, ... x_k)$ então:
+
+$$\sigma(x)_i = \frac{e^{x_i}}{\sum_{i = 1}^{n}{e^{x_i}}}$$
+
+## Resumo até agora
+
+- MLPs são modelos de redes neurais simples
+
+- A natureza da resposta leva a diferentes funções de perda
+
+- Para regressão, usualmente utilizamos o erro quadrático médio. Para logística, usamos a *crossentropy*
+
+- Podemos trabalhar com respostas unidimensionais ou multidimensionais.
+
+
+# Convolutional Neural Networks (CNN)
+
+## CNN's
+
+- É uma arquitetura de redes neurais que é útil principalmente para classificação de imagens.
+
+```{r}
+knitr::include_graphics('img/cnn.jpeg')
+```
+
+::: aside
+**Fonte**: [Introduction to CNN's ](https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53)
+
+:::
+
+
+## Imagens como dados
+
+- Uma imagem em preto e branco pode ser representada da seguinte forma.
+
+```{r}
+knitr::include_graphics('img/5_r.png')
+```
+
+Cada valor representa a intensidade de cinza.
+
+## Imagens como dados
+
+
+:::: {.columns}
+:::{.column width="50%"}
+
+- Imagens coloridas são representadas como um array de 3 dimensões.
+
+- É como se fosse um 'empilhado' de 3 matrizes.
+
+- Cada elemento é a intensidade de cada cor daquele píxel.
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/imagem_gato.jpg')
+```
+
+:::
+
+::::
+
+::: aside
+**Fonte**: [Create a Retro CRT Distortion Effect Using RGB Shifting](https://code.tutsplus.com/tutorials/create-a-retro-crt-distortion-effect-using-rgb-shifting--active-3359)
+:::
+
+## CNN's
+
+A principal diferença com relação à MLP é que a as camadas 'densas' aprendem padrões __globais__ dos inputs, enquanto convoluções aprendem padrões **locais** dos inputs.
+
+
+![](img/4_dlbook.png){width=300px}
+
+::: aside
+
+**Fonte**: Deep Learning with R
+
+:::
+
+## O que é convolução?
+
+- O modelo aplica uma operação diferente de $X\beta$ para produzir $\eta$, que explora a proximidade entre pixels. Essa operação é chamada convolução.
+
+Por exemplo, considere a matriz de pesos 3x3
+
+$$W = \left[\begin{array}{rrr}-1&-1&-1\\0&0&0\\1&1&1\end{array}\right]$$
+
+. . .
+
+E a janela 3x3 a partir do ponto $(12,16)$ da matriz $X$
+
+$$X_{12,16} = \left[\begin{array}{rrr}
+0.98 & 0.53 & 0.79 \\
+0.97 & 0.99 & 1.00 \\
+0.98 & 1.00 & 1.00
+\end{array}\right]$$
+
+## Redes neurais convolucionais
+
+A convolução de $X$ por $W$ no ponto $(12,16)$ é dada por
+
+$$\begin{aligned}
+(X_{12,16} *w )_{12,16}
+&= w_{1,1}x_{11,15} + w_{1,2}x_{11,16} + w_{1,3}x_{11,17} + \\
+&+ w_{2,1}x_{12,15} + w_{2,2}x_{12,16} + w_{2,3}x_{12,17} + \\
+&+ w_{3,1}x_{13,15} + w_{3,2}x_{13,16} + w_{3,3}x_{13,17}
+\end{aligned}$$
+
+Ou seja, é uma multiplicação ponto a ponto.
+
+## Uma convolução
+
+:::: {.columns}
+
+:::{.column width="50%"}
+
+- Definimos uma matriz de pesos (em cinza na representação ao lado)
+
+- Andamos com essa matriz de pesos para cada parte da imagem (em azul ao lado).
+
+- Esses pesos são multiplicados e depois somados para gerar uma nova 'imagem' (em verde).
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/padding_strides.gif')
+```
+
+:::
+
+::::
+
+::: aside
+**Fonte**: [Conv arithmetic](https://github.com/vdumoulin/conv_arithmetic)
+:::
+
+## Outros tipos de padding/strides
+
+<table style="width:100%; table-layout:fixed;">
+  <tr>
+    <td><img width="150px" src="img/no_padding_no_strides.gif"></td>
+    <td><img width="150px" src="img/arbitrary_padding_no_strides.gif"></td>
+    <td><img width="150px" src="img/same_padding_no_strides.gif"></td>
+    <td><img width="150px" src="img/full_padding_no_strides.gif"></td>
+  </tr>
+  <tr>
+    <td>No padding, no strides</td>
+    <td>Arbitrary padding, no strides</td>
+    <td>Half padding, no strides</td>
+    <td>Full padding, no strides</td>
+  </tr>
+  <tr>
+    <td><img width="150px" src="img/no_padding_strides.gif"></td>
+    <td><img width="150px" src="img/padding_strides.gif"></td>
+    <td><img width="150px" src="img/padding_strides_odd.gif"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>No padding, strides</td>
+    <td>Padding, strides</td>
+    <td>Padding, strides (odd)</td>
+    <td></td>
+  </tr>
+</table>
+
+## CNN's
+
+Primeiro temos um *kernel* (matriz de parâmetros p/ cada canal):
+
+```{r}
+knitr::include_graphics('img/channels.gif')
+```
+
+::: aside
+
+**Fonte**: [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
+
+:::
+
+## CNN's
+
+Em seguida somamos os outputs de cada canal:
+
+```{r}
+knitr::include_graphics('img/channel_sum.gif')
+```
+
+::: aside
+
+**Fonte**: [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
+
+:::
+
+## Max Pooling
+
+Serve para reduzir a dimensão da imagem. Parece com o que fazemos na convolução, mas em vez disso calculamos o máximo dos valores de cada janela.
+
+```{r}
+#| out-width: 500px
+knitr::include_graphics('img/max_pooling.gif')
+```
+
+::: aside
+
+**Fonte**: [Intuitively Understanding Convolutions for Deep Learning](https://towardsdatascience.com/intuitively-understanding-convolutions-for-deep-learning-1f6f42faee1)
+
+:::
+
+## Resumo:
+
+- Mesclamos algumas camadas de convolução e max pooling, diminuindo a altura e largura das imagens e aumentando a profundidade.
+
+- Depois transformamos em uma matriz e fazemos um modelo de classificação logístico usual.
+
+```{r}
+knitr::include_graphics('img/cnn.jpeg')
+```
+
+## Dropout
+
+- Técnica de regularização bastante utilizada em deep learning.
+
+- Consiste em aleatóriamente zerar alguns outputs.
+
+- É parametrizado por uma probabilidade $p$ de zerar alguns parâmetros.
+
+```{r}
+knitr::include_graphics('img/dropout.png')
+```
+
+::: aside
+
+Fonte: [Dropout: A Simple Way to Prevent Neural Networks from
+Overfitting](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)
+
+:::
+
+## Batch normalization
+
+:::: {.columns}
+
+:::{.column width="50%"}
+
+- Outra técnica que ajuda bastante a ajustar modelos em deep lerning.
+
+- Consiste em normalizar os valores das 'hidden units'.
+
+- Em geral usamos Batch Norm antes da ativação.
+
+Ver: [aqui](https://www.youtube.com/watch?v=tNIpEZLv_eg) e [aqui](https://www.youtube.com/watch?v=nUUqwaxLnWs)
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/batch_norm.png')
+```
+
+:::
+::::
+
+::: aside
+
+**Fonte**: [Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167v3.pdf)
+
+:::
+
+## Resumo
+
+- redes neurais convolucionais CNN's trocam a função de "multiplicação de matriz" pela função de convolução.
+
+- CNN's são úteis para trabalhar com imagens, pois lidam com a dependência local dos dados.
+
+- CNN's podem ser utilizadas para lidar com problemas de regressão e classificação, unidimensionais e multidimensionais.
+
+- Dropout é uma técnica de regularização muito útil no contexto de redes neurais.
