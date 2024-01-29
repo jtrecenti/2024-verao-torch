@@ -1,0 +1,280 @@
+---
+title: "Aplicações de Torch<br/>com o R"
+subtitle: "Regressão linear e autograd"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    highlight-style: arrow
+    footer: "2024"
+    preview-links: auto
+    slide-number: true
+    preload-iframes: true
+    embed-resources: true
+date-format: long
+lang: pt
+---
+
+## Regressão linear
+
+Imagine que temos a seguinte tabela de dados:
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+
+cars_scale <- cars |>
+  dplyr::mutate(
+    speed = (speed - mean(speed)) / sd(speed),
+    dist = (dist - mean(dist)) / sd(dist)
+  )
+
+head_cars <- cars_scale |>
+  dplyr::mutate(
+    speed = as.character(round(speed, 5)),
+    dist = as.character(round(dist, 5))
+  ) |>
+  head(6)
+
+knitr::kable(dplyr::bind_rows(
+  head_cars,
+  tibble::tibble(speed = "...", dist = "...")
+))
+```
+
+:::
+
+::: {.column width="50%"}
+```{r}
+#| out-height: 100%
+#| out-width: 100%
+#| fig-width: 5
+#| fig-height: 5
+#| dpi: 500
+
+cars_scale |>
+  ggplot2::ggplot() +
+  ggplot2::geom_point(ggplot2::aes(x = speed, y = dist))
+
+```
+
+:::
+
+::::
+
+## Equação
+
+A equação da regressão linear é:
+
+$$
+dist = \beta_0 + \beta_1 speed + \epsilon
+$$
+
+Substituindo pelas variáveis usuais:
+$$
+y = \beta_0 + \beta_1 x + \epsilon
+$$
+
+
+## Função de perda
+
+A **função de perda** mede o quão bem o modelo está se saindo. Geralmente envolve **comparar a saída do modelo com a saída real**.
+
+. . .
+
+A função de perda está ligada à **distribuição de probabilidades** que estamos assumindo para os dados.
+
+
+## Verossimilhança
+
+A verossimilhança é uma função que mede a probabilidade de observarmos os dados que observamos, assumindo que o modelo é verdadeiro.
+
+A verossimilhança na regressão linear para uma distribuição normal é:
+
+$$
+\mathcal{L}(\beta_0, \beta_1) = \prod_{i=1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left( - \frac{(y_i - (\beta_0 + \beta_1 x_i))^2}{2 \sigma^2} \right)
+$$
+
+## Estimador de máxima verossimilhança
+
+O estimador de máxima verossimilhança é o valor dos parâmetros que maximiza a verossimilhança.
+
+$$
+\hat{\beta} = \arg \max_{\beta_0, \beta_1} \mathcal{L}(\beta_0, \beta_1)
+$$
+
+Como veremos, isso é equivalente a minimizar o **erro quadrático médio**.
+
+## Erro quadrático médio
+
+O erro quadrático médio é:
+
+$$
+\text{MSE} = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2 = \frac{1}{n} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
+$$
+
+
+## EMV equivale a minimizar o EQM
+
+Primeiro, tome a log-verossimilhança:
+
+$$
+\log \mathcal{L}(\beta_0, \beta_1) = \sum_{i=1}^n \log \left( \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left( - \frac{(y_i - (\beta_0 + \beta_1 x_i))^2}{2 \sigma^2} \right) \right)
+$$
+
+. . .
+
+$$
+\log \mathcal{L}(\beta_0, \beta_1) = - \frac{n}{2} \log(2 \pi \sigma^2) - \frac{1}{2 \sigma^2} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
+$$
+
+. . .
+
+$$
+\log \mathcal{L}(\beta_0, \beta_1) = - \frac{n}{2} \log(2 \pi \sigma^2) - \frac{1}{2 \sigma^2} \text{MSE}
+$$
+
+Ou seja, **maximizar a verossimilhança** equivale a **minimizar o erro quadrático médio**.
+
+## Versão matricial
+
+$$
+\begin{bmatrix}
+dist_1 \\
+dist_2 \\
+\vdots \\
+dist_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & speed_1 \\
+1 & speed_2 \\
+\vdots & \vdots \\
+1 & speed_n
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\
+\beta_1
+\end{bmatrix}
++
+\begin{bmatrix}
+\epsilon_1 \\
+\epsilon_2 \\
+\vdots \\
+\epsilon_n
+\end{bmatrix}
+$$
+
+
+. . .
+
+$$
+\text{MSE} = \frac{1}{n} (\mathbf{y} - \hat{\mathbf{y}})^t (\mathbf{y} - \hat{\mathbf{y}}) = \frac{1}{n} (\mathbf{y} - \mathbf{X} \hat{\beta})^t (\mathbf{y} - \mathbf{X} \hat{\beta})
+$$
+
+## Representação visual
+
+```{r}
+#| out-height: 600px
+#| out-width: 100%
+#| dpi: 500
+
+beta0 <- seq(-200, 200, length.out = 100)
+beta1 <- seq(-200, 200, length.out = 100)
+
+cars_scale <- cars |>
+  dplyr::mutate(
+    speed = (speed - mean(speed)) / sd(speed)
+  )
+
+mse <- function(beta0, beta1) {
+  mean((cars_scale$dist - (beta0 + beta1 * cars_scale$speed))^2)
+}
+
+mse_matrix <- tidyr::expand_grid(beta0 = beta0, beta1 = beta1) |>
+  dplyr::mutate(mse = purrr::map2_dbl(beta0, beta1, mse)) |>
+  tidyr::pivot_wider(names_from = beta0, values_from = mse) |>
+  dplyr::select(-beta1) |>
+  as.matrix()
+
+plotly::plot_ly(
+  data = tibble::tibble(beta0 = beta0, beta1 = beta1),
+  x = ~beta0,
+  y = ~beta1,
+  z = mse_matrix
+) |>
+  plotly::add_surface(contours = list(
+    z = list(
+      show = TRUE,
+      usecolormap = TRUE,
+      highlightcolor = "#ff0000",
+      project = list(z = TRUE)
+    )
+  ))
+```
+
+## Solução analítica
+
+A solução analítica para o problema de mínimos quadrados é:
+
+$$
+\hat{\beta} = (\mathbf{X}^t \mathbf{X})^{-1} \mathbf{X}^t \mathbf{y}
+$$
+
+Podemos chegar a essa solução derivando o EQM em relação a $\beta$ e igualando a zero.
+
+## Solução numérica
+
+Alternativamente, podemos usar um algoritmo de otimização para encontrar a solução.
+
+. . .
+
+**Descida de gradiente**
+
+Envolve calcular o **gradiente** da função de perda em relação aos parâmetros e atualizar os parâmetros na direção oposta ao gradiente.
+
+$$
+\beta^{(t+1)} = \beta^{(t)} - \alpha \nabla_{\beta} \text{MSE}
+$$
+
+**Método de Newton**
+
+Envolve calcular a matriz **Hessiana** da função de perda em relação aos parâmetros e atualizar os parâmetros na direção oposta ao gradiente.
+
+$$
+\beta^{(t+1)} = \beta^{(t)} - (\nabla_{\beta}^2 \text{MSE})^{-1} \nabla_{\beta} \text{MSE}
+$$
+
+## Quem é o gradiente?
+
+O gradiente é um vetor que aponta na direção de maior crescimento da função. No nosso caso, sem considerar a versão matricial, temos:
+
+$$
+\nabla_{\beta} \text{MSE} = \left( \frac{\partial \text{MSE}}{\partial \beta_0}, \frac{\partial \text{MSE}}{\partial \beta_1} \right)
+$$
+
+$$
+\nabla_{\beta} \text{MSE} = \left( \frac{2}{n} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i)), \frac{2}{n} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i)) x_i \right)
+$$
+
+Versão matricial:
+
+$$
+\nabla_{\beta} \text{MSE} = \frac{2}{n} \mathbf{X}^t (\mathbf{X} \beta - \mathbf{y})
+$$
+
+## Quem é a Hessiana?
+
+A Hessiana é uma matriz que contém as derivadas parciais de segunda ordem da função de perda.
+
+$$
+\nabla_{\beta}^2 \text{MSE} = \begin{bmatrix}
+\frac{\partial^2 \text{MSE}}{\partial \beta_0^2} & \frac{\partial^2 \text{MSE}}{\partial \beta_0 \partial \beta_1} \\
+\frac{\partial^2 \text{MSE}}{\partial \beta_1 \partial \beta_0} & \frac{\partial^2 \text{MSE}}{\partial \beta_1^2}
+\end{bmatrix}
+$$
+
+$$
+\nabla_{\beta}^2 \text{MSE} = \frac{2}{n} \mathbf{X}^t \mathbf{X}
+$$
+
+# Vamos ao R!
