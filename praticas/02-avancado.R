@@ -104,6 +104,10 @@ tensor_b <- torch_arange(start = 1, end = 4)
 # Multiplicação matricial com torch_matmul()
 (t4 <- torch_matmul(t1, t2))
 
+t1$matmul(t2)
+
+t1$mm(t2)
+
 # Transposta
 
 # Transposta com torch_t()
@@ -111,6 +115,8 @@ tensor_b <- torch_arange(start = 1, end = 4)
 
 # ou então
 (t7 <- t1$t())
+
+# t1$t_(): inplace
 
 # Determinante
 
@@ -155,6 +161,8 @@ coef(lm(speed ~ dist, data = cars_scale))
 
 # Solução da regressão linear "na mão" (X'X)^-1 X'y
 
+X$t()$mm(X)
+
 XtX <- torch_matmul(X$t(), X)
 Xty <- torch_matmul(X$t(), y)
 inv <- linalg_inv(XtX)
@@ -187,6 +195,9 @@ torch_triangular_solve(Xty$unsqueeze(2), L, upper = FALSE) |>
 (list_qr <- linalg_qr(X))
 (Q <- list_qr[[1]])
 (R <- list_qr[[2]])
+
+#torch_norm(Q[,1])
+#torch_dot(Q[,1], Q[,2])
 
 # forma alternativa com pacote zeallot:
 c(Q, R) %<-% linalg_qr(X)
@@ -301,6 +312,7 @@ mse <- function(beta) {
   loss
 }
 
+#1:num_iterations
 for (i in seq_len(num_iterations)) {
 
   if (i %% 100 == 0) cat("Iteração: ", i, "\n")
@@ -376,11 +388,20 @@ beta
 # Multi Layer Perceptron =====================================================
 library(torch)
 
+# zz <- torch_tensor(-1, requires_grad = TRUE)
+# zzz <- zz$abs()
+# zzz$backward()
+# zz$grad
+
 cars_scale <- cars |>
   dplyr::mutate(
     speed = scale(speed),
     dist = scale(dist)
   )
+
+cars_scale |>
+  ggplot2::ggplot(ggplot2::aes(x = speed, y = dist)) +
+  ggplot2::geom_point()
 
 cars_matrix <- model.matrix(~speed, data = cars_scale)
 Xy <- cbind(cars_matrix, cars_scale$dist)
@@ -447,6 +468,11 @@ b2 <- torch_zeros(1, d_out, requires_grad = TRUE)
 # na conta para que a rede neural possa aprender relações não lineares
 xx$mm(w)$add(b)$relu()
 
+relu <- function(x) {
+  max(0, x)
+}
+
+relu(-1)
 learning_rate <- 0.01
 
 for (t in 1:1000) {
@@ -485,6 +511,7 @@ for (t in 1:1000) {
 
 }
 
+w1
 loss
 
 ggplot2::ggplot(cars_scale) +
@@ -523,6 +550,9 @@ meu_nn_linear <- nn_module(
     input$mm(self$w) + self$b
   }
 )
+
+mlp$parameters
+
 
 for (t in 1:1000) {
 
@@ -595,7 +625,6 @@ for (t in 1:1000) {
 
 loss
 
-
 # Função de perda -----------------------------------------------------------
 
 mlp <- nn_sequential(
@@ -607,6 +636,9 @@ mlp <- nn_sequential(
 optimizer <- optim_sgd(mlp$parameters, lr = learning_rate)
 
 l <- nn_mse_loss(reduction = "mean")
+
+# nnf_mse_loss(1, 1)
+
 
 for (t in 1:1000) {
 
