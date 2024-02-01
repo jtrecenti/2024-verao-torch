@@ -85,6 +85,7 @@ ggplot(cars_scale) +
 
 ds <- torchvision::mnist_dataset("dados/", download = TRUE)
 ds$.getitem(1)
+ds[1]
 
 # Primeiro, vamos criar um dataset() a partir dos dados que já temos.
 # elementos necessários: initialize, length, .getitem
@@ -116,9 +117,46 @@ ds <- dataset(
   }
 )
 
-ds_cars <- ds(cars)
-ds_cars$.getitem(1)
-ds_cars[1]
+da <- mtcars
+
+ds_mtcars <- dataset(
+  name = "cars_dataset",
+  initialize = function(da) {
+    mtcars_scale <- da |>
+      dplyr::mutate(dplyr::across(
+        c(mpg ,disp, hp, drat, wt, qsec),
+        scale
+      ))
+    # dados em matriz
+    #mtcars_matrix <- model.matrix(~.-mpg, data = mtcars_scale)
+    #Xy <- cbind(mtcars_matrix, mtcars_matrix$mpg)
+    mtcars_matrix <- as.matrix(mtcars_scale)
+
+    # dados em tensor
+    mtcars_tensor <- torch_tensor(mtcars_matrix)
+
+    # dados que vamos usar na rede neural
+    self$x <- mtcars_tensor[, 2:-1]
+    self$y <- mtcars_tensor[, 1]$unsqueeze(2)
+  },
+  .length = function() {
+    dim(self$x)[1]
+  },
+  .getitem = function(idx) {
+    list(self$x[idx, ], self$y[idx, ])
+  }
+)
+
+ds_mtcars <- ds_mtcars(mtcars)
+ds_mtcars$.getitem(1)
+ds_mtcars[1]
+
+dl_mtcars <- dataloader(ds_mtcars, batch_size = 4, shuffle = TRUE)
+
+dl_mtcars |>
+  dataloader_make_iter() |>
+  dataloader_next()
+
 
 # também podemos criar um dataset() a partir de tensores
 ds_cars_alternativa <- tensor_dataset(xx, yy)
@@ -182,7 +220,10 @@ ggplot(cars_scale) +
   geom_smooth(method = "lm", se = FALSE) +
   geom_line(
     colour = "red",
-    data = data.frame(speed = cars_scale$speed, dist = as.numeric(y_pred))
+    data = data.frame(
+      speed = cars_scale$speed,
+      dist = as.numeric(y_pred$to(device = "cpu"))
+    )
   )
 
 # Legal! Então precisamos definir o dataset, o dataloader, nosso
@@ -213,13 +254,22 @@ valid_ds <- mnist_dataset(
   transform = transform_to_tensor
 )
 
+length(train_ds)
+length(valid_ds)
+
 train_dl <- dataloader(train_ds, batch_size = 32, shuffle = TRUE)
 valid_dl <- dataloader(valid_ds, batch_size = 32)
 
 
 train_iter <- train_dl$.iter()
-x <- train_iter$.next()$x
+iter_next <- train_iter$.next()
+x <- iter_next$x
+y <- iter_next$y
+
 plot(as.raster(as.matrix(x[1,1,,])))
+
+dim(as.matrix(x[1,1,,]))
+y[1]
 
 net <- nn_module(
 
@@ -247,6 +297,11 @@ net <- nn_module(
   }
 )
 
+#?nn_soft_margin_loss
+#nn_soft_margin_loss()
+#?nn_cross_entropy_loss()
+#?nn_nll_loss
+
 fitted <- net |>
   luz::setup(
     loss = nn_cross_entropy_loss(),
@@ -257,7 +312,7 @@ fitted <- net |>
   ) |>
   luz::fit(
     train_dl,
-    epochs = 10,
+    epochs = 2,
     valid_data = valid_dl
   )
 
