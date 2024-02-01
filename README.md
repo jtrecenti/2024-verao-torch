@@ -11,6 +11,6 @@ Este curso é projetado para apresentar as capacidades do Torch, uma biblioteca 
 |:----:|:--------:|:------:|:-------:|:----:|:---------:|
 | 1 | Introdução ao Torch | [link](slides/01-introducao.html) | [link](praticas/01-torch.R) | [link](https://forms.gle/2UHbjVJ86k8cYRvX9) | [link](exercicios/01-torch.R) |
 | 2 | Torch avançado e Redes Neurais | [link](slides/02-autograd.html) | [link](praticas/02-avancado.R) | [link](https://forms.gle/VEZ6gpfFQmNtLv2r8) | [link](exercicios/02-avancado.R) |
-| 3 | `luz` e Redes Neurais Convolucionais | [link](slides/03-conv.html) | [link](praticas/03-luz.r) | [em breve]( ) | [link](exercicios/03-luz.R) |
+| 3 | `luz` e Redes Neurais Convolucionais | [link](slides/03-conv.html) | [link](praticas/03-luz.r) | [link](https://forms.gle/LHegdqTZYffeCH5KA) | [link](exercicios/03-luz.R) |
 | 4 | Redes Neurais Recorrentes | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
 | 5 | Aplicações e perspectivas | [em breve]( ) | [em breve]( ) | [em breve]( ) | [em breve]( ) |
