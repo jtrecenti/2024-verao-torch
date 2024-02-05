@@ -213,13 +213,22 @@ valid_ds <- mnist_dataset(
   transform = transform_to_tensor
 )
 
+length(train_ds)
+length(valid_ds)
+
 train_dl <- dataloader(train_ds, batch_size = 32, shuffle = TRUE)
 valid_dl <- dataloader(valid_ds, batch_size = 32)
 
 
 train_iter <- train_dl$.iter()
-x <- train_iter$.next()$x
+iter_next <- train_iter$.next()
+x <- iter_next$x
+y <- iter_next$y
+
 plot(as.raster(as.matrix(x[1,1,,])))
+
+dim(as.matrix(x[1,1,,]))
+y[1]
 
 net <- nn_module(
 
@@ -247,6 +256,11 @@ net <- nn_module(
   }
 )
 
+#?nn_soft_margin_loss
+#nn_soft_margin_loss()
+#?nn_cross_entropy_loss()
+#?nn_nll_loss
+
 fitted <- net |>
   luz::setup(
     loss = nn_cross_entropy_loss(),
@@ -257,7 +271,7 @@ fitted <- net |>
   ) |>
   luz::fit(
     train_dl,
-    epochs = 10,
+    epochs = 2,
     valid_data = valid_dl
   )
 
