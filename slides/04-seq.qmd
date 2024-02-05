@@ -1,0 +1,269 @@
+---
+title: "Aplicações de Torch<br/>com o R"
+subtitle: "Redes neurais recorrentes / séries temporais"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    highlight-style: arrow
+    footer: "2024"
+    preview-links: auto
+    slide-number: true
+    preload-iframes: true
+    embed-resources: true
+date-format: long
+lang: pt
+---
+
+# Redes neurais em textos
+
+## Textos como dados
+
+```{r, out.width="90%"}
+knitr::include_graphics('img/embedding_1.png')
+```
+
+## Cada texto, um vetor
+
+```{r}
+knitr::include_graphics('img/embedding_2.png')
+```
+
+## Embedding (ou Encoding)
+
+- Até agora, cada palavra virou um número inteiro.
+
+- O problema disso é que esses números inteiros representam categorias e não têm as principais características de serem números.
+
+- Não faz sentido fazer operações matemáticas como multiplicação e adição com esses números.
+
+- Não existe uma noção de proximidade entre as palavras.
+
+## One-hot encoding
+
+- Cada texto é representado por uma matriz
+
+```{r, out.width="90%"}
+knitr::include_graphics('img/embedding_3.png')
+```
+
+## One-hot encoding
+
+- O problema de fazer 'one-hot encoding' é principalmente computacional.
+
+- Imagine um vocabulário de 20k palavras, faz com que a matriz tenha 20k colunas, a maioria dos valores sendo **0**, sem trazer muita informação.
+
+- A distância entre todas as palavras é igual.
+
+## Embedding
+
+- Assume-se que cada palavra é representada por um vetor de pesos de dimensão $d$.
+
+```{r, out.width="90%"}
+knitr::include_graphics('img/embedding_4.png')
+```
+
+## Embedding
+
+```{r}
+knitr::include_graphics('img/embedding_5.png')
+```
+
+## Average pooling
+
+Para transformar cada texto em uma linha da base de dados, podemos tomar a média de cada coluna.
+
+```{r}
+knitr::include_graphics('img/avg_pool.png')
+```
+
+## O problema de não considerar a sequência
+
+- Tirar as médias perde a noção de sequências, o que pode ser problemático.
+
+- Existem redes neurais que conseguem manter a noção de sequência.
+
+## RNNs
+
+- A ideia da rede neural recorrente é que cada palavra é processada em sequência.
+- A saída de uma palavra é usada como input para a próxima.
+
+```{r, out.width="80%"}
+knitr::include_graphics('img/vanishing_gradient.png')
+```
+
+Os valores de $S_0$, $S_1$, $S_2$ e $S_3$ são os valores de saída da rede neural para cada palavra. Chamamos esses valores de *hidden states*.
+
+## RNNs
+
+- A operação realizada em cada observação tem pesos para o estado e pesos para os dados, formando a seguinte fórmula:
+
+$$
+S_t = f(S_{t-1}, X_t) = \sigma(S_{t-1}W_s + X_tW_x + b)
+$$
+
+- No caso, $b$ tem um componente do estado e outro dos dados.
+- A notação do `torch` para essa operação é dada por
+
+$$
+h_t = \text{tanh}(W_{i\text{_}h}S_{t-1} + b_{i\text{_}h} + W_{h\text{_}h}X_t + b_{h\text{_}h})
+$$
+
+## Problemas das RNNs simples
+
+- __Vanishing gradient__ problem: conforme aumentamos o tamanho das sequências, fica cada vez mais difícil de um input do final ter efeito sobre os parâmetros das primeiras camadas, pois o gradiente vai ficando muito pequeno.
+
+__Obs__: Também existe o problema do __exploding gradient__, mas isso é fácilmente resolvido utilizando uma técnica chamada *clipping*.
+
+## LSTMs
+
+Long Short Term Memory. É uma arquitetura que lida com o problema dos gradientes que somem.
+
+```{r}
+knitr::include_graphics('img/LSTM3-chain.png')
+```
+
+::: aside
+
+Fonte: <https://colah.github.io/posts/2015-08-Understanding-LSTMs/>
+
+:::
+
+## LSTMs
+
+```{r}
+knitr::include_graphics('img/lstm_gif.gif')
+```
+
+::: aside
+
+Fonte: <https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21>
+
+:::
+
+## Resumo
+
+- Textos podem ser transformados em vetores numéricos, que podem ser transformados em um *embedding*, que simplificam os textos sem perder suas características.
+
+- Redes neurais recorrentes (RNNs) são úteis para trabalhar dados sequenciais, como textos e séries de tempo.
+
+- LSTM é uma arquitetura de redes neurais recorrentes capaz de lidar com problemas numéricos das RNNs.
+
+# Tópicos
+
+## Batch normalization
+
+:::: {.columns}
+::: {.column width="50%"}
+
+- Outra técnica que ajuda bastante a ajustar modelos em deep lerning.
+
+- Consiste em normalizar os valores das 'hidden units'.
+
+- Em geral usamos Batch Norm antes da ativação.
+
+Ver: <https://www.youtube.com/watch?v=tNIpEZLv_eg> e <https://www.youtube.com/watch?v=nUUqwaxLnWs>
+
+:::
+
+::: {.column width="50%"}
+
+```{r}
+knitr::include_graphics('img/batch_norm.png')
+```
+
+:::
+::::
+
+::: aside
+
+Fonte: [Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/pdf/1502.03167v3.pdf)
+
+:::
+
+## RNNs bidirecionais
+
+```{r}
+#| out-width: 100%
+knitr::include_graphics('img/bidirecional.png')
+```
+
+::: aside
+
+Fonte: <https://towardsdatascience.com/understanding-bidirectional-rnn-in-pytorch-5bd25a5dd66>
+
+:::
+
+
+## Modelos pré-treinados
+
+- Reutilizar a parte 'feature learning' em outros bancos de dados.
+
+- O conceito não vale apenas para imagens, mas para qualquer modelo em deep learning.
+
+Conceito:
+
+- Um modelo inteiro é treinado em um banco de dados X.
+
+- Salvamos apenas a parte 'feature learning'.
+
+- Em um outro banco de dados usamos as 'features' que foram aprendidas no banco de dados X e apenas ajustamos a parte de classificar para um outro banco de dados.
+
+## Modelos pré-treinados
+
+Vantagens:
+
+- Reduz muito o tempo para treinar um modelo.
+
+- Faz com que seja possível treinar modelos em bases menores.
+
+. . .
+
+Desvantagens:
+
+- Tem que tomar cuidado com a base em que eles foram treinados inicialmente.
+
+## LeNet5
+
+- 1994!
+
+```{r}
+knitr::include_graphics('img/lenet5.jpg')
+```
+
+## ResNets
+
+- 2015
+- passar os inputs para as camadas da frente.
+
+```{r}
+knitr::include_graphics('img/resnet.png')
+```
+
+## Outros tópicos
+
+- Image Segmentation: segmentar a imagem em diversos objetos. [U-Net](https://arxiv.org/abs/1505.04597) é um dos principais representantes.
+
+- Object detection: encontrar objetos nas imagens e marcá-los. [YOLO](https://pjreddie.com/darknet/yolo/)
+
+```{r, out.width="50%"}
+knitr::include_graphics('img/yolo.png')
+```
+
+- Face recognition: uso de [triplet loss function](https://en.wikipedia.org/wiki/Triplet_loss).
+
+
+## Embeddings pré treinadas
+
+- Ao invés de inicializar a matriz de embeddings de forma aleatória, usamos os pesos obtidos em outros modelos.
+
+- Um dos mais famosos é o GLOVE: um método não supervisionado para obtenção desses pesos: <https://nlp.stanford.edu/projects/glove/>
+
+- Outro muito famoso é o BERT, que tem até sua versão para português, o Bertimbau.
+
+- Atualmente, também temos o embedding ADA, da OpenAI.
+
+```{r}
+knitr::include_graphics('img/glove.png')
+```
+
+
