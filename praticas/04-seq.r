@@ -12,6 +12,9 @@ input <- torch_tensor(
   rbind(c(1, 2, 4, 5), c(4, 3, 2, 9)),
   dtype = torch_long()
 )
+
+input
+
 embedding(input)
 
 # example with padding_idx
@@ -21,7 +24,6 @@ input <- torch_tensor(
   dtype = torch_long()
 )
 embedding(input)
-
 
 # Frases aleatórias
 frases <- c(
@@ -34,6 +36,7 @@ frases <- c(
 tokenize <- function(sentences) {
   unlist(strsplit(sentences, " "))
 }
+
 
 tokens <- unique(tokenize(frases))
 vocab <- purrr::set_names(seq_along(tokens), tokens)
@@ -85,7 +88,7 @@ model <- nn_module(
 
 # Inicializando o modelo
 vocab_size <- length(vocab)
-embedding_dim <- 2 # Dimensionality of the embedding vector
+embedding_dim <- 10 # Dimensionality of the embedding vector
 net <- model(vocab_size, embedding_dim)
 
 
@@ -106,7 +109,7 @@ tok$encode(frases[1])$ids
 tok$encode(frases[2])$ids
 tok$encode(frases[3])$ids
 
-x <- tok::encoding
+#x <- tok::encoding
 
 vectorized_sentences <- purrr::map(
   frases,

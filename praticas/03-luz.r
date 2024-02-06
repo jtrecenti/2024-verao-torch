@@ -271,6 +271,17 @@ plot(as.raster(as.matrix(x[1,1,,])))
 dim(as.matrix(x[1,1,,]))
 y[1]
 
+# 28 x 28
+# nn_conv2d(1, 32, 3)
+
+# t1 <- torch_tensor(as.matrix(x[1,1,,]))$unsqueeze(1)
+# conv1 <- nn_conv2d(1, 32, 3, padding = "same")
+# conv1(t1)
+# conv2 <- nn_conv2d(32, 64, 3)
+# maxp(conv2(conv1(t1)$unsqueeze(1)))
+# maxp <- nn_max_pool2d(2)
+# 64*12*12
+
 net <- nn_module(
 
   "MNIST-CNN",
@@ -301,6 +312,13 @@ net <- nn_module(
 #nn_soft_margin_loss()
 #?nn_cross_entropy_loss()
 #?nn_nll_loss
+
+# - tokenizadores e embeddings
+# - RNN (Recurrent Neural Networks)
+# -- gru
+# -- lstm
+# - aplicação com séries temporais
+# - aplicação com texto
 
 fitted <- net |>
   luz::setup(
