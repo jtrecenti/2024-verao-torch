@@ -3,6 +3,9 @@
 # Inverter ordem de tensor
 
 library(torch)
+library(purrr)
+library(minhub)
+
 
 
 t1 <- torch_tensor(1:10)
@@ -318,6 +321,7 @@ gpt2_hf_weights_transpose <- function(state_dict) {
   }
   state_dict
 }
+
 
 ## APLICAÇÃO -------------------------------------------------------------------
 identifier <- "gpt2"
